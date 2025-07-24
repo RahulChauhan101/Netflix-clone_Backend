@@ -1,12 +1,25 @@
-const Video = require("../Models/videoModel");
+const Video = require("../Models/video")
 
-const getAllVideos = async (req, res) => {
+// POST /api/videos
+const createVideo = async (req, res) => {
   try {
-    const videos = await Video.find();
-    res.json(videos);
+    const { url } = req.body;
+    const newVideo = new Video({ url });
+    await newVideo.save();
+    res.status(201).json(newVideo);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { getAllVideos };
+// GET /api/videos
+const getVideos = async (req, res) => {
+  try {
+    const videos = await Video.find();
+    res.status(200).json(videos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { createVideo, getVideos };

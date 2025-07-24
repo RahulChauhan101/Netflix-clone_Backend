@@ -7,6 +7,9 @@ const movieRoutes = require('./Routes/movies');
 const userRoutes = require('./Routes/users');
 const Show = require('./Models/showModel');
 const showRoutes = require("./Routes/showRoutes");
+const videoRoutes = require('./Routes/videoRoutes');
+const trailerRoutes = require("./Routes/trailerRoutes");
+
 
 const app = express();
 app.use(cors());
@@ -14,7 +17,9 @@ app.use(express.json());
 
 // ✅ Correct route path
 app.use('/api/movies', movieRoutes);
+app.use('/api',videoRoutes)
 app.use('/api/users',userRoutes);
+app.use('/api',trailerRoutes)
 app.use('/api/show', showRoutes); // ✅ Mount POST route
 
 
