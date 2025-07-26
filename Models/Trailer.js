@@ -9,4 +9,4 @@ const trailerSchema = new mongoose.Schema({
   description: String,
 });
 
-module.exports = mongoose.model("Trailer", trailerSchema);
+module.exports = mongoose.model("trailer", trailerSchema);

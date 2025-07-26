@@ -1,3 +1,5 @@
+
+//server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,7 +11,7 @@ const Show = require('./Models/showModel');
 const showRoutes = require("./Routes/showRoutes");
 const videoRoutes = require('./Routes/videoRoutes');
 const trailerRoutes = require("./Routes/trailerRoutes");
-
+const searchRoutes = require("./Routes/searchRoutes");
 
 const app = express();
 app.use(cors());
@@ -17,6 +19,7 @@ app.use(express.json());
 
 // ✅ Correct route path
 app.use('/api/movies', movieRoutes);
+app.use('/api',searchRoutes)
 app.use('/api',videoRoutes)
 app.use('/api/users',userRoutes);
 app.use('/api',trailerRoutes)

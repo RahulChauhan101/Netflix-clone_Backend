@@ -3,30 +3,89 @@ const router = express.Router();
 const Movie = require('../Models/Movies');
 const https = require('https');
 
-// ✅ Add Movie
-router.post('/', async (req, res) => {
+// ✅ POST: Create new movie
+router.post("/", async (req, res) => {
   try {
-    const { title, description, posterUrl, releaseYear, movieLink } = req.body;
-    const newMovie = new Movie({ title, description, posterUrl, releaseYear, movieLink });
-    await newMovie.save();
-    res.status(201).json(newMovie);
+    const {
+      title,
+      description,
+      poster,
+      year,
+      released,
+      runtime,
+      cast,
+      genres,
+      directors,
+      languages,
+      rated,
+      type,
+      movieLink,
+    } = req.body;
+
+    const newMovie = new Movie({
+      title,
+      description,
+      poster,
+      year,
+      released,
+      runtime,
+      cast,
+      genres,
+      directors,
+      languages,
+      rated,
+      type,
+      movieLink,
+    });
+
+    const savedMovie = await newMovie.save();
+    res.status(201).json(savedMovie);
   } catch (err) {
-    console.error("❌ Failed to add movie:", err.message);
-    res.status(400).json({ error: "Failed to add movie", details: err.message });
+    console.error("❌ Failed to save movie:", err.message);
+    res.status(500).json({ error: "Failed to create movie", details: err.message });
   }
 });
 
-// ✅ Get All Movies
+// // ✅ GET: Search movies by title or fetch all
+// router.get('/', async (req, res) => {
+//   try {
+//     const { query } = req.query;
+//     const movies = query
+//       ? await Movie.find({ title: { $regex: query, $options: 'i' } })
+//       : await Movie.find();
+
+//     res.json(movies);
+//   } catch (err) {
+//     res.status(500).json({ error: "Failed to fetch movies" });
+//   }
+// });
+
+
+
 router.get('/', async (req, res) => {
   try {
-    const movies = await Movie.find();
-    res.json(movies);
+    const { query, page = 1, limit = 20 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const searchFilter = query
+      ? { title: { $regex: query, $options: 'i' } }
+      : {};
+
+    const [movies, total] = await Promise.all([
+      Movie.find(searchFilter).skip(skip).limit(parseInt(limit)),
+      Movie.countDocuments(searchFilter),
+    ]);
+
+    res.json({ movies, total });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch movies" });
+    console.error("❌ Error fetching movies:", err.message);
+    res.status(500).json({ error: "Failed to fetch movies", details: err.message });
   }
 });
 
-// ✅ Call RapidAPI (moved here from server.js)
+
+
+// ✅ GET: Fetch a show from RapidAPI
 router.get('/show', (req, res) => {
   const id = req.query.id;
   console.log("✅ ID from query:", id);
